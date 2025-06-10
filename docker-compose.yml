@@ -1,0 +1,17 @@
+services:
+  frontend:
+    #build:
+    # context: .
+    # dockerfile: Dockerfile
+    # image: trungnghia1996/vn_time_table:latest
+    image: registry.nguyenanh-est.com/nguyen_anh_est/vn_time_table:latest
+    container_name: vn_time_table
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      NUXT_PUBLIC_BASE_URL: https://api-test-tkb.nguyenanh-est.com
+      NUXT_ENCRYPTION_KEY: key-32-chars-123456
+    ports:
+      - "3000:3000"
