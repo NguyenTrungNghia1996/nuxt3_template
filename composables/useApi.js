@@ -6,8 +6,8 @@ import { useUserStore } from "~~/stores/userStore";
 class Request {
   constructor() {
     this.handler = {
-      onRequest({ request, options }) { },
-      onRequestError({ request, options, error }) { },
+      onRequest({ request, options }) {},
+      onRequestError({ request, options, error }) {},
       onResponse({ request, response, options }) {
         return response._data;
       },
@@ -22,19 +22,22 @@ class Request {
         return response._data;
       },
     };
-    const userStore = useUserStore();
-    this.TOKEN = `Bearer ${userStore.token}`;
     this.base_url = useRuntimeConfig().public.baseURL;
+  }
+
+  createHeaders() {
+    const userStore = useUserStore();
+    return {
+      "Content-type": "application/json; charset=UTF-8",
+      Authorization: `Bearer ${userStore.token}`,
+    };
   }
 
   get(url, options) {
     return useFetch(url, {
       baseURL: this.base_url,
       method: "GET",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: this.TOKEN,
-      },
+      headers: this.createHeaders(),
       ...options,
       ...this.handler,
     });
@@ -43,10 +46,7 @@ class Request {
     return useFetch(url, {
       baseURL: this.base_url,
       method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: this.TOKEN,
-      },
+      headers: this.createHeaders(),
       ...options,
       ...this.handler,
     });
@@ -55,10 +55,7 @@ class Request {
     return useFetch(url, {
       baseURL: this.base_url,
       method: "PATCH",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: this.TOKEN,
-      },
+      headers: this.createHeaders(),
       ...options,
       ...this.handler,
     });
@@ -67,10 +64,7 @@ class Request {
     return useFetch(url, {
       baseURL: this.base_url,
       method: "PUT",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: this.TOKEN,
-      },
+      headers: this.createHeaders(),
       ...options,
       ...this.handler,
     });
@@ -79,10 +73,7 @@ class Request {
     return useFetch(url, {
       baseURL: this.base_url,
       method: "DELETE",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: this.TOKEN,
-      },
+      headers: this.createHeaders(),
       ...options,
       ...this.handler,
     });
