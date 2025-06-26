@@ -27,6 +27,14 @@ export const useSettingStore = defineStore(
           icon: "ant-design:unordered-list-outlined",
           children: [],
         },
+        {
+          title: "Role Group",
+          key: "role_group",
+          url: "/role-group",
+          bitIndex: 4,
+          icon: "ant-design:team-outlined",
+          children: [],
+        },
         // {
         //   title: "Quản Lý Danh Mục",
         //   key: "category_management",
