@@ -1,6 +1,7 @@
 let ENDPOINTS = {
   LOGIN: "/login",
   S3: "/api/presigned_url",
+  USER_PASSWORD: "/api/users/password",
 };
 import { useUserStore } from "~~/stores/userStore";
 class Request {
@@ -158,6 +159,9 @@ class User {
   }
   async delete(data) {
     return await this.request.delete(ENDPOINTS.USER, data);
+  }
+  async change_pasword(data) {
+    return await this.request.post(ENDPOINTS.USER_PASSWORD, data);
   }
 }
 class SchoolLevel {
