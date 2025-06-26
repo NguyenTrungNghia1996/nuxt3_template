@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     encryptionKey: process.env.NUXT_ENCRYPTION_KEY || "default-strong-key-32-chars-123456",
     public: {
-      baseURL: process.env.NUXT_PUBLIC_BASE_URL || "https://localhost:4000",
+      baseURL: process.env.NUXT_PUBLIC_BASE_URL || "http://localhost:4000",
     },
   },
 });
