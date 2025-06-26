@@ -69,10 +69,11 @@ export const useMenu = () => {
     try {
       const { data } = await RestApi.menu.list();
       if (data.value?.status === "success") {
-        const tree = buildTree(data.value.data.items);
+        const tree = buildTree(data.value.data);
         settingStore.setMenu(tree);
         return tree;
       }
+      console.log("🚀 ~ loadMenu ~ data:", data)
     } catch (e) {
       console.error("Failed to load menu", e);
     }

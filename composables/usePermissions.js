@@ -25,7 +25,7 @@ export const usePermissions = () => {
 
   const loadPermissions = async () => {
     try {
-      const { data: res } = await RestApi.user.permission();
+      const { data: res } = await RestApi.roles.detail({ params: { id:"685d01ab5e17ba55d0e349f2" } });
       const permission = res?.value?.data?.permission;
       if (permission) {
         settingStore.setPermissions(permission);

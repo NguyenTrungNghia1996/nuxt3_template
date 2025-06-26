@@ -11,6 +11,7 @@
           <span>{{ item.title }}</span>
         </span>
       </a-breadcrumb-item>
+      
     </a-breadcrumb>
   </div>
 </template>
@@ -18,10 +19,37 @@
 <script setup>
 const route = useRoute();
 const settingStore = useSettingStore();
+import { useMenu } from "~/composables/useMenu";
+const { visibleMenu } = useMenu();
 const breadcrumbItems = ref([]);
 
+// Map các permission từ store thành dạng { key: permissionValue }
+const permissionMap = computed(() =>
+  Object.fromEntries(settingStore.permissions.map(p => [p.key, p.permissionValue]))
+);
+
+// Các trạng thái quyền
+const PERMISSION_STATE = {
+  NO_ACCESS: 0,
+  VIEW: 1,
+  EDIT: 2,
+};
+
+// Quyền của route hiện tại, lưu cả vào store
+const currentPermission = ref(PERMISSION_STATE.NO_ACCESS);
+const permissionLabel = computed(() => {
+  switch (currentPermission.value) {
+    case PERMISSION_STATE.EDIT:
+      return "Sửa/Xóa";
+    case PERMISSION_STATE.VIEW:
+      return "Chỉ xem";
+    default:
+      return "Không xem";
+  }
+});
+
 // Lấy menu data từ store
-const menuData = computed(() => settingStore.menuItems);
+const menuData = computed(() => visibleMenu.value);
 
 // Hàm tìm kiếm menu item theo path
 const findMenuItemByPath = (items, path) => {
@@ -58,6 +86,18 @@ const updateBreadcrumb = () => {
     path: item.url,
   }));
 
+  // Tính quyền hiện tại dựa trên menu matched
+  if (matchedItems.length) {
+    const currentItem = matchedItems[matchedItems.length - 1];
+    const parentKey =
+      matchedItems.length > 1 ? matchedItems[matchedItems.length - 2].key : 'menu';
+    const parentPerm = permissionMap.value[parentKey] ?? 0;
+    currentPermission.value = (parentPerm >> currentItem.permissionBit) & 0b11;
+  } else {
+    currentPermission.value = PERMISSION_STATE.NO_ACCESS;
+  }
+  settingStore.setCurrentPermission(currentPermission.value);
+
   // Thêm trang chủ nếu không phải là trang chủ
   if (breadcrumbItems.value.length === 0 || breadcrumbItems.value[0].path !== "/") {
     breadcrumbItems.value.unshift({
@@ -84,6 +124,8 @@ watch(() => route.path, updateBreadcrumb, { immediate: true });
 
 // Theo dõi thay đổi menu data (nếu cần)
 watch(() => settingStore.menu, updateBreadcrumb);
+watch(() => visibleMenu.value, updateBreadcrumb);
+watch(() => settingStore.permissions, updateBreadcrumb);
 </script>
 
 <style>
