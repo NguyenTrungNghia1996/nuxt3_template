@@ -10,49 +10,9 @@ export const useSettingStore = defineStore(
         showLogo: true,
         transparent: false,
       },
-      menu: [
-        {
-          title: "Dashboard",
-          key: "dashboard",
-          url: "/dashboard",
-          bitIndex: 0,
-          icon: "ant-design:project-outlined",
-          children: [],
-        },
-        {
-          title: "Menu",
-          key: "menu",
-          url: "/menu",
-          bitIndex: 2,
-          icon: "ant-design:unordered-list-outlined",
-          children: [],
-        },
-        {
-          title: "Role Group",
-          key: "role_group",
-          url: "/role-group",
-          bitIndex: 4,
-          icon: "ant-design:team-outlined",
-          children: [],
-        },
-        // {
-        //   title: "Quản Lý Danh Mục",
-        //   key: "category_management",
-        //   url: null,
-        //   bitIndex: 2,
-        //   icon: "ant-design:database-twotone",
-        //   children: [
-        //     {
-        //       title: "Cấp Học",
-        //       key: "school_level",
-        //       bitIndex: 0,
-        //       url: "/category_management/school_level",
-        //       icon: "ant-design:unordered-list-outlined",
-        //     },
-        //   ],
-        // },
-
-      ],
+      menu: [],
+      permissions: [],
+      current_permission: 0,
     }),
     actions: {
       setLoading(value) {
@@ -64,10 +24,21 @@ export const useSettingStore = defineStore(
       setMenu(value) {
         this.menu = value;
       },
+      setPermissions(value) {
+        this.permissions = value;
+      },
+      setCurrentPermission(value) {
+        this.current_permission = value;
+      },
     },
     getters: {
       menuItems: state => state.menu,
+      menuPermissions: state => state.permissions,
       isLoading: state => state.loading.isActive,
+      currentPermission: state => {
+        const PERMISSION_STATE = { NO_ACCESS: 0, VIEW: 1, EDIT: 2 };
+        return state.current_permission === PERMISSION_STATE.EDIT
+      },
     },
     // persist: {
     //   // storage: piniaPluginPersistedstate.localStorage(),
