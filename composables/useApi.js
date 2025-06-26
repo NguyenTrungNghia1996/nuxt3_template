@@ -2,6 +2,7 @@ let ENDPOINTS = {
   LOGIN: "/login",
   S3: "/api/presigned_url",
   USER_PASSWORD: "/api/users/password",
+  MENU: "/api/menus",
 };
 import { useUserStore } from "~~/stores/userStore";
 class Request {
@@ -80,10 +81,29 @@ class Request {
     });
   }
 }
+
+class Menu {
+  constructor(request) {
+    this.request = request;
+  }
+  async list(data) {
+    return await this.request.get(ENDPOINTS.MENU, data);
+  }
+  async create(data) {
+    return await this.request.post(ENDPOINTS.MENU, data);
+  }
+  async update(data) {
+    return await this.request.put(ENDPOINTS.MENU, data);
+  }
+  async delete(data) {
+    return await this.request.delete(ENDPOINTS.MENU, data);
+  }
+}
 class RestApi {
   constructor() {
     this.request = new Request();
     this.user = new User(this.request);
+    this.menu = new Menu(this.request);
   }
   async get_url_upload(acl, content_encoding, content_type, key, platform) {
     let data = { acl, content_encoding, content_type, key, platform };

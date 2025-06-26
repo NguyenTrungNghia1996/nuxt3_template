@@ -19,6 +19,14 @@ export const useSettingStore = defineStore(
           icon: "ant-design:project-outlined",
           children: [],
         },
+        {
+          title: "Menu",
+          key: "menu",
+          url: "/menu",
+          bitIndex: 2,
+          icon: "ant-design:unordered-list-outlined",
+          children: [],
+        },
         // {
         //   title: "Quản Lý Danh Mục",
         //   key: "category_management",
