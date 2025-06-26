@@ -3,6 +3,9 @@ let ENDPOINTS = {
   S3: "/api/presigned_url",
   USER_PASSWORD: "/api/users/password",
   MENU: "/api/menus",
+  ROLE_GROUP: "/api/role-groups",
+  ROLE_GROUP_DETAIL: "/api/role-groups/detail",
+  USER_PERMISSION: "",
 };
 import { useUserStore } from "~~/stores/userStore";
 class Request {
@@ -99,11 +102,33 @@ class Menu {
     return await this.request.delete(ENDPOINTS.MENU, data);
   }
 }
+
+class RoleGroup {
+  constructor(request) {
+    this.request = request;
+  }
+  async list(data) {
+    return await this.request.get(ENDPOINTS.ROLE_GROUP, data);
+  }
+  async detail(data) {
+    return await this.request.get(ENDPOINTS.ROLE_GROUP_DETAIL, data);
+  }
+  async create(data) {
+    return await this.request.post(ENDPOINTS.ROLE_GROUP, data);
+  }
+  async update(data) {
+    return await this.request.put(ENDPOINTS.ROLE_GROUP, data);
+  }
+  async delete(data) {
+    return await this.request.delete(ENDPOINTS.ROLE_GROUP, data);
+  }
+}
 class RestApi {
   constructor() {
     this.request = new Request();
     this.user = new User(this.request);
     this.menu = new Menu(this.request);
+    this.roles = new RoleGroup(this.request);
   }
   async get_url_upload(acl, content_encoding, content_type, key, platform) {
     let data = { acl, content_encoding, content_type, key, platform };
@@ -173,6 +198,9 @@ class User {
   }
   async change_pasword(data) {
     return await this.request.put(ENDPOINTS.USER_PASSWORD, data);
+  }
+  async permission(data) {
+    return await this.request.get(ENDPOINTS.USER_PERMISSION, data);
   }
 }
 
