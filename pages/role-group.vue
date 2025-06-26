@@ -12,8 +12,8 @@
           <template v-if="column.key === 'stt'">
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
-          <template v-if="column.key === 'mota'">
-            <span v-if="record.mota">{{ record.mota }}</span>
+          <template v-if="column.key === 'description'">
+            <span v-if="record.description">{{ record.description }}</span>
             <span v-else class="text-gray-400">Trống</span>
           </template>
           <template v-if="column.key === 'action'">
@@ -41,12 +41,12 @@
     <a-modal v-model:open="visible" :title="isEdit ? 'Chỉnh sửa Nhóm quyền' : 'Thêm mới Nhóm quyền'" @cancel="handleCancel" :width="modalWidth" :bodyStyle="{ maxHeight: '70vh', overflowY: 'auto' }">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <a-form ref="formRef" :model="formState" layout="vertical">
-          <a-form-item label="Tên Nhóm quyền" name="ten" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }" :rules="rules.ten">
-            <a-input v-model:value="formState.ten" placeholder="Nhập tên Nhóm quyền" :maxlength="200" show-count />
+          <a-form-item label="Tên Nhóm quyền" name="name" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }" :rules="rules.name">
+            <a-input v-model:value="formState.name" placeholder="Nhập tên Nhóm quyền" :maxlength="200" show-count />
           </a-form-item>
 
-          <a-form-item label="Mô tả" name="mota" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }">
-            <a-textarea v-model:value="formState.mota" :rows="4" placeholder="Nhập mô tả (nếu có)" :maxlength="200" show-count />
+          <a-form-item label="Mô tả" name="description" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }">
+            <a-textarea v-model:value="formState.description" :rows="4" placeholder="Nhập mô tả (nếu có)" :maxlength="200" show-count />
           </a-form-item>
         </a-form>
         <PermissionEditor v-model="formState.permission" />
@@ -91,20 +91,20 @@ const pagination = reactive({
 
 const columns = [
   { title: 'STT', key: 'stt', width: 50, align: 'center' },
-  { title: 'Tên Nhóm quyền', dataIndex: 'ten', key: 'ten', ellipsis: true },
-  { title: 'Mô tả', dataIndex: 'mota', key: 'mota', ellipsis: true },
+  { title: 'Tên Nhóm quyền', dataIndex: 'name', key: 'name', ellipsis: true },
+  { title: 'Mô tả', dataIndex: 'description', key: 'description', ellipsis: true },
   { title: 'Thao tác', key: 'action', width: 80, align: 'center', fixed: 'right' }
 ];
 
 const formState = reactive({
   id: null,
-  ten: '',
-  mota: '',
+  name: '',
+  description: '',
   permission: []
 });
 
 const rules = reactive({
-  ten: [
+  name: [
     { required: true, message: 'Vui lòng nhập tên Nhóm quyền', trigger: 'blur' },
     { min: 2, message: 'Tên phải có ít nhất 2 ký tự', trigger: 'blur' }
   ]
@@ -144,7 +144,7 @@ const handleSearch = async () => {
 
 const showModal = async () => {
   isEdit.value = false;
-  Object.assign(formState, { id: null, ten: '', mota: '', permission: [] });
+  Object.assign(formState, { id: null, name: '', description: '', permission: [] });
   visible.value = true;
 };
 
