@@ -23,6 +23,11 @@
           </template>
           <template v-if="column.key === 'avatar'">
             <a-avatar v-if="record.url_avatar" :src="record.url_avatar" />
+            <a-avatar v-else>
+              <template #icon>
+                <UserOutlined />
+              </template>
+            </a-avatar>
           </template>
           <template v-if="column.key === 'role_groups'">
             <span v-if="record.role_groups && record.role_groups.length">
