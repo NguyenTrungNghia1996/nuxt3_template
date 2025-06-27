@@ -5,7 +5,7 @@ let ENDPOINTS = {
   MENU: "/api/menus",
   ROLE_GROUP: "/api/role-groups",
   ROLE_GROUP_DETAIL: "/api/role-groups/detail",
-  USER_PERMISSION: "",
+  USER_PERMISSION: "/api/permissions",
 };
 import { useUserStore } from "~~/stores/userStore";
 class Request {
@@ -84,45 +84,6 @@ class Request {
     });
   }
 }
-
-class Menu {
-  constructor(request) {
-    this.request = request;
-  }
-  async list(data) {
-    return await this.request.get(ENDPOINTS.MENU, data);
-  }
-  async create(data) {
-    return await this.request.post(ENDPOINTS.MENU, data);
-  }
-  async update(data) {
-    return await this.request.put(ENDPOINTS.MENU, data);
-  }
-  async delete(data) {
-    return await this.request.delete(ENDPOINTS.MENU, data);
-  }
-}
-
-class RoleGroup {
-  constructor(request) {
-    this.request = request;
-  }
-  async list(data) {
-    return await this.request.get(ENDPOINTS.ROLE_GROUP, data);
-  }
-  async detail(data) {
-    return await this.request.get(ENDPOINTS.ROLE_GROUP_DETAIL, data);
-  }
-  async create(data) {
-    return await this.request.post(ENDPOINTS.ROLE_GROUP, data);
-  }
-  async update(data) {
-    return await this.request.put(ENDPOINTS.ROLE_GROUP, data);
-  }
-  async delete(data) {
-    return await this.request.delete(ENDPOINTS.ROLE_GROUP, data);
-  }
-}
 class RestApi {
   constructor() {
     this.request = new Request();
@@ -172,6 +133,43 @@ class RestApi {
       body: buf,
     });
     return direct_url;
+  }
+}
+class Menu {
+  constructor(request) {
+    this.request = request;
+  }
+  async list(data) {
+    return await this.request.get(ENDPOINTS.MENU, data);
+  }
+  async create(data) {
+    return await this.request.post(ENDPOINTS.MENU, data);
+  }
+  async update(data) {
+    return await this.request.put(ENDPOINTS.MENU, data);
+  }
+  async delete(data) {
+    return await this.request.delete(ENDPOINTS.MENU, data);
+  }
+}
+class RoleGroup {
+  constructor(request) {
+    this.request = request;
+  }
+  async list(data) {
+    return await this.request.get(ENDPOINTS.ROLE_GROUP, data);
+  }
+  async detail(data) {
+    return await this.request.get(ENDPOINTS.ROLE_GROUP_DETAIL, data);
+  }
+  async create(data) {
+    return await this.request.post(ENDPOINTS.ROLE_GROUP, data);
+  }
+  async update(data) {
+    return await this.request.put(ENDPOINTS.ROLE_GROUP, data);
+  }
+  async delete(data) {
+    return await this.request.delete(ENDPOINTS.ROLE_GROUP, data);
   }
 }
 class User {
