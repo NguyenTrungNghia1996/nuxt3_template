@@ -23,7 +23,7 @@
           </template>
           <template v-if="column.key === 'role_groups'">
             <span v-if="record.role_groups && record.role_groups.length">
-              {{ record.role_groups.join(', ') }}
+              {{ record.role_groups.map(id => roleGroupMap.value[id] || id).join(', ') }}
             </span>
             <span v-else class="text-gray-400">Trống</span>
           </template>
@@ -105,6 +105,7 @@ const formState = reactive({
 })
 
 const roleGroupOptions = ref([])
+const roleGroupMap = ref({})
 
 const param = ref({ page: 1, limit: 10, search: '' })
 
@@ -112,7 +113,12 @@ const fetchRoleGroups = async () => {
   try {
     const { data } = await RestApi.roles.list({ params: { PageIndex: 1, PageSize: 1000 } })
     if (data.value?.status === 'success') {
-      roleGroupOptions.value = (data.value.data.items || []).map(i => ({ value: i.id, label: i.name }))
+      const items = data.value.data.items || []
+      roleGroupOptions.value = items.map(i => ({ value: i.id, label: i.name }))
+      roleGroupMap.value = items.reduce((map, i) => {
+        map[i.id] = i.name
+        return map
+      }, {})
     }
   } catch (e) {
     console.error(e)
