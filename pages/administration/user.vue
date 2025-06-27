@@ -23,7 +23,7 @@
           </template>
           <template v-if="column.key === 'role_groups'">
             <span v-if="record.role_groups && record.role_groups.length">
-              {{ record.role_groups.map(id => roleGroupMap.value[id] || id).join(', ') }}
+              {{ record.role_groups.map(id => roleGroupNameMap.value[id] || id).join(', ') }}
             </span>
             <span v-else class="text-gray-400">Trống</span>
           </template>
@@ -105,7 +105,7 @@ const formState = reactive({
 })
 
 const roleGroupOptions = ref([])
-const roleGroupMap = ref({})
+const roleGroupNameMap = ref({})
 
 const param = ref({ page: 1, limit: 10, search: '' })
 
@@ -115,14 +115,39 @@ const fetchRoleGroups = async () => {
     if (data.value?.status === 'success') {
       const items = data.value.data.items || []
       roleGroupOptions.value = items.map(i => ({ value: i.id, label: i.name }))
-      roleGroupMap.value = items.reduce((map, i) => {
-        map[i.id] = i.name
-        return map
-      }, {})
     }
   } catch (e) {
     console.error(e)
   }
+}
+
+const fetchRoleGroupName = async (id) => {
+  if (roleGroupNameMap.value[id]) return roleGroupNameMap.value[id]
+  try {
+    const { data } = await RestApi.roles.detail({ params: { id } })
+    if (data.value?.status === 'success') {
+      const name = data.value.data.name
+      roleGroupNameMap.value[id] = name
+      return name
+    }
+  } catch (e) {
+    console.error(e)
+  }
+  return id
+}
+
+const updateRoleGroupNames = async (items) => {
+  const ids = new Set()
+  items.forEach((item) => {
+    ;(item.role_groups || []).forEach((id) => ids.add(id))
+  })
+  const promises = []
+  ids.forEach((id) => {
+    if (!roleGroupNameMap.value[id]) {
+      promises.push(fetchRoleGroupName(id))
+    }
+  })
+  await Promise.all(promises)
 }
 
 const fetchData = async p => {
@@ -132,6 +157,7 @@ const fetchData = async p => {
     if (data.value?.status === 'success') {
       dataSource.value = data.value.data.items || []
       pagination.total = data.value.data.total
+      await updateRoleGroupNames(dataSource.value)
     }
   } catch (err) {
     message.error('Không thể tải dữ liệu')
