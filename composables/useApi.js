@@ -2,6 +2,8 @@ let ENDPOINTS = {
   LOGIN: "/login",
   S3: "/api/presigned_url",
   USER_PASSWORD: "/api/users/password",
+  USER: "/api/users",
+  USER_DETAIL: "/api/users/detail",
   MENU: "/api/menus",
   ROLE_GROUP: "/api/role-groups",
   ROLE_GROUP_DETAIL: "/api/role-groups/detail",
