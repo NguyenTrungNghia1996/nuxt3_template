@@ -23,6 +23,9 @@ export const useUserStore = defineStore(
       role: state => {
         return state.user?.item?.username || null;
       },
+      avatar: state => {
+        return state.user?.user.url_avatar|| null;
+      }
     },
     persist: {
       // storage: piniaPluginPersistedstate.localStorage(),
