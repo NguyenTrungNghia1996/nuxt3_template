@@ -21,6 +21,9 @@
           <template v-if="column.key === 'stt'">
             {{ (pagination.current - 1) * pagination.pageSize + index + 1 }}
           </template>
+          <template v-if="column.key === 'avatar'">
+            <a-avatar v-if="record.url_avatar" :src="record.url_avatar" />
+          </template>
           <template v-if="column.key === 'role_groups'">
             <span v-if="record.role_groups && record.role_groups.length">
               {{ record.role_groups.map(g => g.name).join(', ') }}
@@ -51,6 +54,12 @@
         <a-form-item label="Họ tên" name="name" :rules="[{ required: true, message: 'Vui lòng nhập họ tên' }]">
           <a-input v-model:value="formState.name" />
         </a-form-item>
+        <a-form-item label="Ảnh đại diện" name="url_avatar">
+          <input type="file" accept="image/*" @change="handleAvatarChange" :disabled="uploadingAvatar" />
+          <div v-if="formState.url_avatar" class="mt-2">
+            <img :src="formState.url_avatar" class="w-20 h-20 object-cover rounded" />
+          </div>
+        </a-form-item>
         <a-form-item label="Nhóm quyền" name="role_groups">
           <a-select v-model:value="formState.role_groups" mode="multiple" :options="roleGroupOptions" option-label-prop="label" />
         </a-form-item>
@@ -77,6 +86,7 @@ const visible = ref(false)
 const confirmLoading = ref(false)
 const isEdit = ref(false)
 const formRef = ref()
+const uploadingAvatar = ref(false)
 
 const dataSource = ref([])
 const pagination = reactive({
@@ -90,6 +100,7 @@ const pagination = reactive({
 
 const columns = [
   { title: 'STT', key: 'stt', width: 50, align: 'center' },
+  { title: 'Ảnh', dataIndex: 'url_avatar', key: 'avatar', width: 80, align: 'center' },
   { title: 'Tên đăng nhập', dataIndex: 'username', key: 'username' },
   { title: 'Họ tên', dataIndex: 'name', key: 'name' },
   { title: 'Nhóm quyền', key: 'role_groups' },
@@ -101,6 +112,7 @@ const formState = reactive({
   username: '',
   password: '',
   name: '',
+  url_avatar: '',
   role_groups: []
 })
 
@@ -150,9 +162,35 @@ const handleSearch = async () => {
   await fetchData({ ...param.value, page: 1 })
 }
 
+const handleAvatarChange = async e => {
+  const file = e.target.files[0]
+  if (!file) return
+  try {
+    uploadingAvatar.value = true
+    const url = await RestApi.upload_s3(`${Date.now()}_${file.name}`, file, {
+      acl: 'public-read',
+      encoding: 'blob',
+      content_type: file.type,
+      bucket: 'website'
+    })
+    formState.url_avatar = url
+  } catch (err) {
+    message.error('Upload ảnh thất bại')
+  } finally {
+    uploadingAvatar.value = false
+  }
+}
+
 const showModal = () => {
   isEdit.value = false
-  Object.assign(formState, { id: null, username: '', password: '', name: '', role_groups: [] })
+  Object.assign(formState, {
+    id: null,
+    username: '',
+    password: '',
+    name: '',
+    url_avatar: '',
+    role_groups: []
+  })
   visible.value = true
 }
 
@@ -162,6 +200,7 @@ const editItem = record => {
     id: record.id,
     username: record.username,
     name: record.name,
+    url_avatar: record.url_avatar,
     role_groups: (record.role_groups || []).map(g => g.id),
     password: ''
   })
@@ -174,10 +213,21 @@ const handleOk = async () => {
     confirmLoading.value = true
     let res
     if (isEdit.value) {
-      const payload = { id: formState.id, name: formState.name, role_groups: formState.role_groups }
+      const payload = {
+        id: formState.id,
+        name: formState.name,
+        url_avatar: formState.url_avatar,
+        role_groups: formState.role_groups
+      }
       res = await RestApi.user.update({ body: payload })
     } else {
-      const payload = { username: formState.username, password: formState.password, name: formState.name, role_groups: formState.role_groups }
+      const payload = {
+        username: formState.username,
+        password: formState.password,
+        name: formState.name,
+        url_avatar: formState.url_avatar,
+        role_groups: formState.role_groups
+      }
       res = await RestApi.user.create({ body: payload })
     }
     if (res.data.value?.status === 'success') {
