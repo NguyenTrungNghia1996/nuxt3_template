@@ -127,9 +127,8 @@ const handleChangePassword = async () => {
     confirmLoading.value = true;
     const { data, status } = await RestApi.user.change_pasword({
       body: JSON.stringify({
-        confirmNewPassword: passwordForm.value.confirmPassword,
-        currentPassword: passwordForm.value.currentPassword,
-        newPassword: passwordForm.value.newPassword,
+        old_password: passwordForm.value.currentPassword,
+        new_password: passwordForm.value.newPassword,
       }),
     });
     if (status.value === "success") {

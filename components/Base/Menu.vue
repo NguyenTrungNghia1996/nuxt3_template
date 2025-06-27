@@ -44,6 +44,7 @@
 
 <script setup>
 const settingStore = useSettingStore();
+import { useMenu } from "~/composables/useMenu";
 import { useRouter } from "vue-router";
 import { useBreakpoints, breakpointsTailwind } from "@vueuse/core";
 
@@ -65,8 +66,9 @@ watch(isMediumAndUp, () => {
 watch(isLargeAndUp, () => {
   if (isLargeAndUp.value && collapsed.value) collapsed.value = false;
 });
+const { visibleMenu } = useMenu();
 const formattedMenu = computed(() => {
-  return settingStore.menuItems;
+  return visibleMenu.value;
 });
 // Filter menu based on search query
 const filteredMenuList = computed(() => {
