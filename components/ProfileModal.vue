@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2 md:p-4 bg-white min-h-full max-w-lg mx-auto">
+  <a-modal v-model:open="visible" title="Hồ sơ cá nhân" @cancel="handleCancel">
     <a-form ref="formRef" :model="formState" layout="vertical">
       <a-form-item label="Tên đăng nhập">
         <a-input v-model:value="formState.username" disabled />
@@ -18,19 +18,29 @@
           </a-avatar>
         </div>
       </a-form-item>
-      <div class="flex justify-end mt-4">
-        <a-button type="primary" @click="handleSave" :loading="saving">Lưu thay đổi</a-button>
-      </div>
     </a-form>
-  </div>
+    <template #footer>
+      <a-button @click="handleCancel">Hủy</a-button>
+      <a-button type="primary" @click="handleSave" :loading="saving">Lưu thay đổi</a-button>
+    </template>
+  </a-modal>
 </template>
 
 <script setup>
+import { UserOutlined } from '@ant-design/icons-vue'
+const props = defineProps({
+  open: { type: Boolean, default: false }
+})
+const emit = defineEmits(['update:open'])
 const { RestApi } = useApi()
 const userStore = useUserStore()
 const formRef = ref()
 const uploadingAvatar = ref(false)
 const saving = ref(false)
+const visible = computed({
+  get: () => props.open,
+  set: v => emit('update:open', v)
+})
 
 const formState = reactive({
   id: '',
@@ -78,6 +88,7 @@ const handleSave = async () => {
     if (res.data.value?.status === 'success') {
       message.success(res.data.value?.message || 'Cập nhật thành công')
       userStore.setUser({ ...userStore.user, user: { ...userStore.user.user, name: formState.name, avatar: formState.url_avatar } })
+      emit('update:open', false)
     } else {
       throw new Error(res.data.value?.message || 'Thất bại')
     }
@@ -88,5 +99,11 @@ const handleSave = async () => {
   }
 }
 
-await fetchProfile()
+const handleCancel = () => {
+  emit('update:open', false)
+}
+
+watch(visible, async (val) => {
+  if (val) await fetchProfile()
+})
 </script>
