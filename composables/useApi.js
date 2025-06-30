@@ -8,6 +8,7 @@ let ENDPOINTS = {
   ROLE_GROUP: "/api/role-groups",
   ROLE_GROUP_DETAIL: "/api/role-groups/detail",
   USER_PERMISSION: "/api/permissions",
+  ME: "/api/me",
 };
 import { useUserStore } from "~~/stores/userStore";
 class Request {
@@ -92,6 +93,7 @@ class RestApi {
     this.user = new User(this.request);
     this.menu = new Menu(this.request);
     this.roles = new RoleGroup(this.request);
+    this.me = new Me(this.request);
   }
   async get_url_upload(acl, content_encoding, content_type, key, platform) {
     let data = { acl, content_encoding, content_type, key, platform };
@@ -172,6 +174,17 @@ class RoleGroup {
   }
   async delete(data) {
     return await this.request.delete(ENDPOINTS.ROLE_GROUP, data);
+  }
+}
+class Me {
+  constructor(request) {
+    this.request = request;
+  }
+  async detail(data) {
+    return await this.request.get(ENDPOINTS.ME, data);
+  }
+  async update(data) {
+    return await this.request.put(ENDPOINTS.ME, data);
   }
 }
 class User {

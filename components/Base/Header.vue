@@ -21,8 +21,8 @@
             </div>
 
             <!-- Avatar -->
-            <div class="relative">
-              <a-avatar v-if="userStore.user.avatar" :src="userStore.user.avatar" class="w-9 h-9 transition-all duration-300 ease-out group-hover:ring-2 group-hover:ring-blue-400 group-hover:scale-110" />
+            <div class="relative" @click.stop="showProfileModal">
+              <a-avatar v-if="userStore.avatar" :src="userStore.avatar" class="w-9 h-9 transition-all duration-300 ease-out group-hover:ring-2 group-hover:ring-blue-400 group-hover:scale-110" />
               <a-avatar v-else class="w-9 h-9 bg-gray-600 transition-all duration-300 ease-out group-hover:ring-2 group-hover:ring-blue-400 group-hover:scale-110" :style="{ verticalAlign: 'middle' }" style="background-color: #8e8e8e">
                 <template #icon>
                   <UserOutlined class="text-gray-300" />
@@ -34,7 +34,7 @@
 
         <template #overlay>
           <a-menu class="min-w-[180px] bg-gray-800 border border-gray-700 rounded-lg py-1 shadow-xl">
-            <a-menu-item key="profile" class="hover:bg-gray-700/50 !px-4 !py-2.5 !mx-0 text-gray-200 hover:text-white" @click="navigateTo('/profile')">
+            <a-menu-item key="profile" class="hover:bg-gray-700/50 !px-4 !py-2.5 !mx-0 text-gray-200 hover:text-white" @click="showProfileModal">
               <div class="flex items-center gap-2">
                 <UserOutlined class="text-blue-400" />
                 <span>Hồ sơ cá nhân</span>
@@ -76,17 +76,20 @@
         </div>
       </a-form>
     </a-modal>
+    <ProfileModal v-model:open="profileModalVisible" />
   </div>
 </template>
 
 <script setup>
 import { KeyOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons-vue";
+import ProfileModal from "~/components/ProfileModal.vue";
 
 const userStore = useUserStore();
 const { RestApi } = useApi();
 
 // Modal state
 const changePasswordModalVisible = ref(false);
+const profileModalVisible = ref(false);
 const confirmLoading = ref(false);
 const passwordFormRef = ref();
 
@@ -157,6 +160,10 @@ const resetForm = () => {
     newPassword: "",
     confirmPassword: "",
   };
+};
+
+const showProfileModal = () => {
+  profileModalVisible.value = true;
 };
 
 const signOut = async () => {
