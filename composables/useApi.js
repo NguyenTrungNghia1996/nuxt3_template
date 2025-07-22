@@ -129,10 +129,10 @@ class RestApi {
       method: "PUT",
       headers: {
         Authorization: "",
-        "x-amz-acl": acl || "public-read",
-        "Content-Encoding": encoding,
-        "Content-Type": content_type,
-        "Access-Control-Allow-Origin": "*",
+        // "x-amz-acl": acl || "public-read",
+        // "Content-Encoding": encoding,
+        // "Content-Type": content_type,
+        // "Access-Control-Allow-Origin": "*",
       },
       body: buf,
     });
